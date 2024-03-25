@@ -60,7 +60,6 @@ async function updateBook(req, res) {
     }
     res.json(book);
   } catch (error) {
-    console.log("error", error.message);
     bookErrorHandler(error, res);
   }
 }
@@ -68,11 +67,11 @@ async function updateBook(req, res) {
 async function deleteBook(req, res) {
   const { id } = req.params;
   try {
-    const book = await Book.findByIdAndDelete(id)
+    const book = await Book.findByIdAndDelete(id);
     if (!book) {
       throw new Error("Cast to ObjectId");
     }
-    res.status(204).json()
+    res.status(204).json();
   } catch (error) {
     bookErrorHandler(error, res);
   }
