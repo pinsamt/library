@@ -9,7 +9,9 @@ app.use(Express.json());
 app.use(Express.urlencoded({ extended: true }));
 
 app.get("/", (req, res) => {
-  res.send("Library");
+  res.json({
+    message: "Library API",
+  });
 });
 
 app.use(
