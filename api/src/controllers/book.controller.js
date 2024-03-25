@@ -1,41 +1,76 @@
+const Author = require("../models/author.model");
 const Book = require("../models/book.model");
 const { bookErrorHandler } = require("../utils/apiHelpers");
 
-function createBook(req, res) {
+async function createBook(req, res) {
+  const _book = req.body;
   try {
-    res.json("unimplemented");
+    const author = await Author.findById(_book.author);
+    if (!author) {
+      throw new Error("Cast to ObjectId: author");
+    }
+    const book = await Book.create(_book);
+    await book.populate("author");
+    res.status(201).json(book);
   } catch (error) {
     bookErrorHandler(error, res);
   }
 }
 
-function getBooks(req, res) {
+async function getBooks(req, res) {
+  let filter = {};
+  if (req.query.author) {
+    filter.author = req.query.author;
+  }
   try {
-    //TODO handle author query
-    res.json("unimplemented");
+    const books = await Book.find(filter).populate("author");
+    res.json(books);
   } catch (error) {
-    bookErrorHandler(error, res);
+    res.json([]);
   }
 }
-function getBook(req, res) {
+async function getBook(req, res) {
+  const { id } = req.params;
   try {
-    res.json("unimplemented");
+    const book = await Book.findById(id).populate("author");
+    if (!book) {
+      throw new Error("Cast to ObjectId");
+    }
+    res.json(book);
   } catch (error) {
     bookErrorHandler(error, res);
   }
 }
 
-function updateBook(req, res) {
+async function updateBook(req, res) {
+  const { id } = req.params;
+  const _book = req.body;
   try {
-    res.json("unimplemented");
+    const author = await Author.findById(_book.author);
+    if (!author) {
+      throw new Error("Cast to ObjectId: author");
+    }
+    const book = await Book.findByIdAndUpdate(id, _book, {
+      new: true,
+    }).populate("author");
+    if (!book) {
+      throw new Error("Cast to ObjectId");
+    }
+    res.json(book);
   } catch (error) {
+    console.log("error", error.message);
     bookErrorHandler(error, res);
   }
 }
 
-function deleteBook(req, res) {
+async function deleteBook(req, res) {
+  const { id } = req.params;
   try {
-    res.json("unimplemented");
+    const book = await Book.findByIdAndDelete(id)
+    if (!book) {
+      throw new Error("Cast to ObjectId");
+    }
+    res.status(204).json()
   } catch (error) {
     bookErrorHandler(error, res);
   }
