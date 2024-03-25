@@ -1,4 +1,3 @@
-
 const Express = require("express");
 const cors = require("cors");
 const authorRouter = require("./routes/author.route");
@@ -9,12 +8,17 @@ const app = Express();
 app.use(Express.json());
 app.use(Express.urlencoded({ extended: true }));
 
-app.use(cors({
-    origin: ["http://localhost:3000", "http://127.0.0.1:3000"]
-}))
+app.get("/", (req, res) => {
+  res.send("GET request to the homepage");
+});
+
+app.use(
+  cors({
+    origin: ["http://localhost:3000", "http://127.0.0.1:3000"],
+  })
+);
 
 app.use("/api/v1/authors", authorRouter);
 app.use("/api/v1/books", bookRouter);
 
-
-module.exports = app
+module.exports = app;
