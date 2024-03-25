@@ -1,4 +1,5 @@
 const Author = require("../models/author.model");
+const { authorErrorHandler } = require("../utils/apiHelpers");
 
 async function createAuthor(req, res) {
   try {
@@ -6,15 +7,7 @@ async function createAuthor(req, res) {
     const author = await Author.create(_author);
     res.status(201).json(author);
   } catch (error) {
-    console.error("Error creating author: ", error.message);
-    if (error.message.includes("validation failed")) {
-      return res.status(400).json({
-        message: error.message,
-      });
-    }
-    res.status(500).json({
-      message: "Error creating author: " + error.message,
-    });
+    authorErrorHandler(error, res)
   }
 }
 
@@ -23,10 +16,7 @@ async function getAuthors(req, res) {
     const authors = await Author.find();
     res.json(authors);
   } catch (error) {
-    console.error("Error getting authors: ", error.message);
-    res.status(500).json({
-      message: "Error getting authors: " + error.message,
-    });
+    authorErrorHandler(error, res);
   }
 }
 
@@ -39,37 +29,41 @@ async function getAuthor(req, res) {
     }
     res.json(author);
   } catch (error) {
-    console.error("Error getting author: ", error.message);
-    if (error.message.includes("Cast to ObjectId")) {
-      return res.status(404).json({
-        message: "Author not found",
-      });
-    }
-    res.status(500).json({
-      message: "Error getting authors: " + error.message,
-    });
+    authorErrorHandler(error, res);
+    
   }
 }
 
 async function updateAuthor(req, res) {
+  const { id } = req.params;
+  const _author = req.body;
   try {
-    //TODO: update author
-    res.json("Unimplemented");
-  } catch (error) {
-    res.status(500).json({
-      message: error.message,
+    if (id !== _author._id) {
+      throw new Error("Cast to ObjectId");
+    }
+    const updatedAuthor = await Author.findByIdAndUpdate(id, _author, {
+      new: true,
     });
+    if (!updatedAuthor) {
+      throw new Error("Cast to ObjectId");
+    }
+    res.json(updatedAuthor);
+  } catch (error) {
+    authorErrorHandler(error, res);
   }
 }
 
 async function deleteAuthor(req, res) {
+  const { id } = req.params;
+
   try {
-    //TODO: delete author
-    res.json("Unimplemented");
+    const author = await Author.findByIdAndDelete(id);
+    if (!author) {
+      throw new Error("Cast to ObjectId");
+    }
+    res.status(204).json();
   } catch (error) {
-    res.status(500).json({
-      message: error.message,
-    });
+    authorErrorHandler(error, res);
   }
 }
 
