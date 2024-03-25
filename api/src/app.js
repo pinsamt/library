@@ -2,6 +2,7 @@
 const Express = require("express");
 const cors = require("cors");
 const authorRouter = require("./routes/author.route");
+const bookRouter = require("./routes/book.route");
 
 const app = Express();
 
@@ -13,6 +14,7 @@ app.use(cors({
 }))
 
 app.use("/api/v1/authors", authorRouter);
+app.use("/api/v1/books", bookRouter);
 
 
 module.exports = app
