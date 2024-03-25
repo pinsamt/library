@@ -29,6 +29,7 @@ async function getBooks(req, res) {
     res.json([]);
   }
 }
+
 async function getBook(req, res) {
   const { id } = req.params;
   try {
