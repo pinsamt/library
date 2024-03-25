@@ -42,7 +42,8 @@ async function updateAuthor(req, res) {
       throw new Error("Cast to ObjectId");
     }
     const updatedAuthor = await Author.findByIdAndUpdate(id, _author, {
-      new: true,
+        new: true,
+        runValidators: true
     });
     if (!updatedAuthor) {
       throw new Error("Cast to ObjectId");

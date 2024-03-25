@@ -53,6 +53,7 @@ async function updateBook(req, res) {
     }
     const book = await Book.findByIdAndUpdate(id, _book, {
       new: true,
+      runValidators: true,
     }).populate("author");
     if (!book) {
       throw new Error("Cast to ObjectId");
